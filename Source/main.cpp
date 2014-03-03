@@ -13,7 +13,7 @@
 using namespace std;
 
 int main()
-{
+{ //THIS WAS CHANGED
 	spantree Spantree;
 	Spantree.readInput();
 	//Reads input and stores
