@@ -15,8 +15,7 @@ using namespace std;
 
 spantree::spantree()
 {
-	arrayLength = 10;
-	//Nothing for now
+	//arrayLength = 10;
 } //Constructor 
 
 void spantree::readInput()
@@ -28,6 +27,8 @@ void spantree::readInput()
 	
 	cin >> numCity;
 	cin >> numRoad;
+	
+	arrayLength = numRoad;
 	
 	while(!cin.eof())
 	{
@@ -62,6 +63,9 @@ void spantree::testInput() {
 
 void spantree::resize()
 {
+
+	//THIS IS NOW UNECCESSARY SINCE ARRAYLENGTH IS = TO NUMBER OF ROADS
+	
 	road* newEdgeList = new road[arrayLength * 2];
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
@@ -75,12 +79,54 @@ void spantree::resize()
 
 void spantree::sortInfo()
 {
+	//SHELL SORT OR QUICK SORT ALGORITHM
+	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
+	int temp;
+	unsigned k;
+	
+	for(unsigned i = 0; i < 8; i++)
+	{
+		for(unsigned j = gaps[i]; i < arrayLength; j+= 1)
+		{
+			if(arrayLength < j)
+			{
+				break;
+			}
 
+			temp = edgeList[j].getLength();
+			
+			for(k = j; (k >= gaps[i]) && (edgeList[k - gaps[i]].getLength()) > temp; k -= gaps[i])
+			{
+				edgeList[k].setLength(edgeList[k - gaps[i]].getLength());
+			}
+			edgeList[k].setLength(temp);
+		}
+	}
+	testSort();
+	
 } //Sorts each region's road length and creates ordered array
+
+void spantree::testSort()
+{
+	cout << "The ordered list of edges is: " << endl;
+	for(unsigned i = 0; i < arrayLength; i++)
+	{
+		cout << edgeList[i].getLength() << endl;
+	}
+}
 
 void spantree::buildTree()
 {
-
+	/*Increment through list of edges
+		add edges one at a time to final product
+			make sure cities they are connecting are not already connected
+			check to see if cities are already in region
+				if not, make new region and insert edge
+				otherwise, add to existing region
+			Continue until all cities are connected in each region
+				make sure to add non-determinism alg here*/
+			
+			
 } //Builds each region using the lowest cost edges from each region
 
 void spantree::printOut()

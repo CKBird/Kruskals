@@ -40,7 +40,8 @@ public:
 	void sortInfo();	//Sorts each regions roads by length and creates ordered arrays with least -> most length pointers
 	void buildTree();	//Builds each region using the lowest cost edges from each region, THIS IS WHERE REGION CREATION WILL HAPPEN
 	void printOut();	//Prints each region in the output desired by Chen
-	void testInput(); // delete this
+	void testInput();	// delete this
+	void testSort();	// delete this too
 	
 private:
 	int numCity;
