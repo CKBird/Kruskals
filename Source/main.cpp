@@ -13,9 +13,10 @@
 using namespace std;
 
 int main()
-{ //THIS WAS CHANGED
+{
 	spantree Spantree;
 	Spantree.readInput();
+	Spantree.testInput();
 	//Reads input and stores
 	
 	Spantree.sortInfo();
