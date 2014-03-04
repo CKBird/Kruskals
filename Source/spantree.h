@@ -18,13 +18,13 @@ class road
 {
 public:
 	road();
-	void setLCity(int LCity)	{ leftCity = LCity; }
-	void setRCity(int RCity)	{ rightCity = RCity; }
-	void setLength(int length)	{ roadLength = length; }
-	int getLCity() 				{ return leftCity; }
-	int getRCity()				{ return rightCity; }
-	int getLength()				{ return roadLength; }
-	
+	void setLCity(int LCity)		{ leftCity = LCity; }
+	void setRCity(int RCity)		{ rightCity = RCity; }
+	void setLength(int length)		{ roadLength = length; }
+	int getLCity() 					{ return leftCity; }
+	int getRCity()					{ return rightCity; }
+	int getLength()					{ return roadLength; }
+		
 private:
 	int roadLength;
 	int leftCity;
@@ -35,15 +35,16 @@ class spantree
 {
 public:
 	spantree();
-	void readInput();	//Reads input and stores
-	void resize();		//Resizes array to double length
-	void sortInfo();	//Sorts each regions roads by length and creates ordered arrays with least -> most length pointers
-	void buildTree();	//Builds each region using the lowest cost edges from each region, THIS IS WHERE REGION CREATION WILL HAPPEN
-	void printOut();	//Prints each region in the output desired by Chen
-	void testInput();	// delete this
-	void testSort();	// delete this too
+	void readInput();		//Reads input and stores
+	void resize();			//Resizes array to double length
+	void sortInfo();		//Sorts each regions roads by length and creates ordered arrays with least -> most length pointers
+	void buildTree();		//Builds each region using the lowest cost edges from each region
+	XXX findSet(XXX);		//Will return the region the road is in for comparison
+	void printOut();		//Prints each region in the output desired by Chen
+	void testInput();		// delete this
+	void testSort();		// delete this too
 	
-private:
+private: 
 	int numCity;
 	int numRoad;
 	road* edgeList;

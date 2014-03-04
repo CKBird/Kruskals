@@ -108,7 +108,7 @@ void spantree::sortInfo()
 
 void spantree::testSort()
 {
-	cout << "The ordered list of edges is: " << endl;
+	cout << endl << "The ordered list of edges is: " << endl;
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
 		cout << edgeList[i].getLength() << endl;
@@ -117,7 +117,13 @@ void spantree::testSort()
 
 void spantree::buildTree()
 {
-	/*Increment through list of edges
+	unsigned i = 0;
+	//While edge list is not empty && minimum cost forest is not yet found
+	//Remove edge from Edge List
+		//If it joins two separate trees, add, and combine trees
+		//Otherwise discard
+
+		/*Increment through list of edges
 		add edges one at a time to final product
 			make sure cities they are connecting are not already connected
 			check to see if cities are already in region
@@ -126,8 +132,23 @@ void spantree::buildTree()
 			Continue until all cities are connected in each region
 				make sure to add non-determinism alg here*/
 			
-			
+	while(i < arrayLength)
+	{
+		if(findSet(edgeList[i].getLCity()) != findSet(edgeList[i].getRCity()))
+		{
+			//findSet will check which region each node of the edge 
+			//is in, if they are in the same one, it will not add
+			//otherwise, it will add edge to tree, and combine each nodes region
+		}
+	}
+
+	
 } //Builds each region using the lowest cost edges from each region
+
+XXX spantree::findSet(XXX)
+{
+	
+}
 
 void spantree::printOut()
 {
