@@ -13,22 +13,34 @@
 
 using namespace std;
 
+road::road()
+{
+
+} //Constructor for road class
+
+region::region()
+{
+	regionNum = -1;
+	regionName = -1;
+} //Constructor for region class
+
 spantree::spantree()
 {
-	//arrayLength = 10;
+
 } //Constructor 
 
 void spantree::readInput()
 {
-	edgeList = new road[arrayLength];
-	edgeCount = 0;
-	
 	int leftCity, rightCity, length;
 	
 	cin >> numCity;
 	cin >> numRoad;
 	
 	arrayLength = numRoad;
+	finalEdgeList = new road[arrayLength];
+	edgeList = new road[arrayLength]; //Ditto
+	edgeCount = 0; //This used to be up on line 35
+
 	
 	while(!cin.eof())
 	{
@@ -47,17 +59,25 @@ void spantree::readInput()
 		edgeList[edgeCount] = Road;
 		edgeCount++;			
 	} //Once this loop ends, all roads are stored into edgeList array
+	
+	for(int i = 0; i < numCity; i++)
+	{
+		region Region;
+		Region.setRegion(i);
+		Region.setNum(i);
+		regionList[i] = Region;
+	} //Once this is done, there will be numCity Regions, each with their own name
 } //Reads input and stores
 
-void spantree::testInput() {
+void spantree::testInput() 
+	{
+		cout << "Cities : " << numCity;
+		cout << "    Roads : " << numRoad << endl;
 
-	cout << "Cities : " << numCity;
-	cout << "    Roads : " << numRoad << endl;
-
-	for(unsigned i = 0; i < edgeCount; i++) {
-		road Road = edgeList[i];
-		cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
-	}
+		for(unsigned i = 0; i < edgeCount; i++) {
+			road Road = edgeList[i];
+			cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
+		}
 		
 }
 
@@ -117,45 +137,58 @@ void spantree::testSort()
 
 void spantree::buildTree()
 {
-	unsigned i = 0;
-	//While edge list is not empty && minimum cost forest is not yet found
-	//Remove edge from Edge List
-		//If it joins two separate trees, add, and combine trees
-		//Otherwise discard
-
-		/*Increment through list of edges
-		add edges one at a time to final product
-			make sure cities they are connecting are not already connected
-			check to see if cities are already in region
-				if not, make new region and insert edge
-				otherwise, add to existing region
-			Continue until all cities are connected in each region
-				make sure to add non-determinism alg here*/
-			
-	while(i < arrayLength)
+	int position = 0;
+	for(unsigned i = 0; i < edgeCount; i++) //Take edges one at a time from sorted list
 	{
 		if(findSet(edgeList[i].getLCity()) != findSet(edgeList[i].getRCity()))
+			//findSet returns pointer to set city is in
+			//If they are not in the same set, put together
 		{
-			//findSet will check which region each node of the edge 
-			//is in, if they are in the same one, it will not add
-			//otherwise, it will add edge to tree, and combine each nodes region
+			finalEdgeList[position] = edgeList[i]; //Add edge to final list
+			connect(edgeList[i].getLCity(), edgeList[i].getRCity()); //Put cities in same set
+			position++;
 		}
 	}
-
 	
 } //Builds each region using the lowest cost edges from each region
 
-XXX spantree::findSet(XXX)
+int spantree::findSet(int city)
 {
-	
-}
+	int regionNum;
+	for(int i = 0; i < getNumCity(); i++) //Increment through list of regions
+	{
+		if(regionList[i].getName() == city) //If regions original name is same as the city
+		{
+			regionNum = regionList[i].getNum(); //Get the current name of the region it's in
+			break;
+		}		
+	}
+	return regionNum;
+} //Returns int number of region it is in
+
+void spantree::connect(int LCity, int RCity)
+{
+	int regionNum;
+	int changedRegion = -1;
+	for(int i = 0; i < getNumCity(); i++)
+	{
+		if(regionList[i].getName() == LCity)
+		{
+			regionNum = regionList[i].getNum();
+		}
+		else if(regionList[i].getName() == RCity)
+		{
+			changedRegion = i;
+		}
+	}
+	regionList[changedRegion].setNum(regionNum);
+} //Connects the two input cities
 
 void spantree::printOut()
 {
-
+	for(int i = 0; i < getNumCity(); i++)
+	{
+		cout << "Length: " << finalEdgeList[i].getLength() << " --- LCity: " << finalEdgeList[i].getLCity() << " --- RCity: " << finalEdgeList[i].getRCity() << endl;
+	}
 } //Prints each region in the output desired by chen
 
-road::road()
-{
-
-} //Constructor for road class

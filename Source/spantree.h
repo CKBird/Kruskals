@@ -14,6 +14,22 @@
 
 using namespace std;
 
+class region //Each vertex has it's own region class instance, information is stored here
+{
+public:
+	region();
+	region* getNext()				{ return nextRegion; }
+	void setRegion(unsigned region)	{ regionName = region; }
+	void setNum(int newValue)		{ regionNum = newValue; }
+	int getName()					{ return regionName; }
+	int getNum()					{ return regionNum; }
+	
+private:
+	int regionNum; //The final region it ends up in
+	int regionName; //The name of the region that started the set
+	region* nextRegion;
+};
+
 class road
 {
 public:
@@ -39,7 +55,9 @@ public:
 	void resize();			//Resizes array to double length
 	void sortInfo();		//Sorts each regions roads by length and creates ordered arrays with least -> most length pointers
 	void buildTree();		//Builds each region using the lowest cost edges from each region
-	XXX findSet(XXX);		//Will return the region the road is in for comparison
+	int findSet(int city);	//Will return the region the road is in for comparison
+	void connect(int LCity, int RCity); //Puts two cities together, fixing regions aswell
+	int getNumCity()		{ return numCity; }
 	void printOut();		//Prints each region in the output desired by Chen
 	void testInput();		// delete this
 	void testSort();		// delete this too
@@ -50,5 +68,7 @@ private:
 	road* edgeList;
 	unsigned arrayLength;
 	unsigned edgeCount;
+	road* finalEdgeList;
+	region* regionList;
 };
 #endif
