@@ -23,10 +23,13 @@ public:
 	void setNum(int newValue)		{ regionNum = newValue; }
 	int getName()					{ return regionName; }
 	int getNum()					{ return regionNum; }
+	void setNumCities()				{ numCities++; }
+	int getNumCities()				{ return numCities; }
 	
 private:
 	int regionNum; //The final region it ends up in
 	int regionName; //The name of the region that started the set
+	int numCities;
 	//region* nextRegion;
 };
 
@@ -40,11 +43,14 @@ public:
 	int getLCity() 					{ return leftCity; }
 	int getRCity()					{ return rightCity; }
 	int getLength()					{ return roadLength; }
+	void setRegion(int region)		{ currRegion = region; }
+	int getRegion()					{ return currRegion; }
 
 private:
 	int roadLength;
 	int leftCity;
 	int rightCity;
+	int currRegion;
 };
 
 class spantree

@@ -22,6 +22,7 @@ region::region()
 {
 	regionNum = -1;
 	regionName = -1;
+	numCities = 1;
 } //Constructor for region class
 
 spantree::spantree()
@@ -133,6 +134,7 @@ void spantree::testSort()
 	{
 		cout << edgeList[i].getLength() << endl;
 	}
+	cout << endl;
 }
 
 void spantree::buildTree()
@@ -186,35 +188,46 @@ void spantree::connect(int LCity, int RCity)
 
 void spantree::printOut()
 {
-	int numRegions = 1;
-	for(int i = 1; i < numCity; i++)
+	for(int i = 0; i < getNumCity(); i++) //Will increment through region list
 	{
-		if(regionList[i].getNum() != regionList[i-1].getNum())
+		for(unsigned j = 0; j < arrayLength; j++) //Increments through finalEdgeList
 		{
-			numRegions++;
+			if(regionList[i].getName() == finalEdgeList[j].getRCity()) //If RCity matches region NAME
+			{
+				finalEdgeList[j].setRegion(regionList[i].getNum()); //Sets region of edge
+			}
+		}
+	} //Once finished, each road in finalEdgeList will have a region value
+	
+	for(int j = 0; j < getNumCity(); j++) //Go through each region
+	{
+		for(unsigned i = 0; i < arrayLength; i++)
+		{
+			if(finalEdgeList[i].getRegion() == regionList[j].getNum())
+			{
+				regionList[j].setNumCities();
+			}	
+		}
+	} //Once finished, each region will have the current number of cities in it
+	
+	cout << "<?xml version=\"1.5\"?>" << endl;
+	cout << "<country>" << endl;
+	
+	for(int i = 1; i < getNumCity(); i++) //1 to n, number of cities loop
+	{
+		for(int j = 0; j < getNumCity(); j++) //Go through Region List
+		{
+			if(regionList[j].getNumCities() == i)
+			{
+				cout << "<region>" << endl;
+				//ROAD LOOP HERE
+				cout << "NumCities: " << regionList[j].getNumCities() << endl;
+				cout << "</region>" << endl;
+			}
 		}
 	}
-	cout << "<?xml version ='1.5'?>" << endl;
-	cout << "<country>" << endl;
-	//for(int j = 0; j < numRegions; j++)
-	//{
-		cout << "<region>" << endl;
-		//for(int k = 0; k < position+1; k++) //Increments through finalEdgeList, can look for cities -> regions
-		//{
-		for(int k = 0; k < numCity; k++)
-			{	
-				if(finalEdgeList[k].getRCity() < finalEdgeList[k].getLCity())
-				{
-					cout << "<road>" << finalEdgeList[k].getRCity() << " " << finalEdgeList[k].getLCity() << " " << finalEdgeList[k].getLength() << "</road>" << endl;
-				}
-				else
-				{
-					cout << "<road>" << finalEdgeList[k].getLCity() << " " << finalEdgeList[k].getRCity() << " " <<finalEdgeList[k].getLength() << "</road>" << endl;
-				}
-			}
-		//}
-		cout << "</region>" << endl;
-	//}
+	
 	cout << "</country>" << endl;
+	
 } //Prints each region in the output desired by chen
 
