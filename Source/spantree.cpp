@@ -186,9 +186,35 @@ void spantree::connect(int LCity, int RCity)
 
 void spantree::printOut()
 {
-	for(int i = 0; i < getNumCity(); i++)
+	int numRegions = 1;
+	for(int i = 1; i < numCity; i++)
 	{
-		cout << "Length: " << finalEdgeList[i].getLength() << " --- LCity: " << finalEdgeList[i].getLCity() << " --- RCity: " << finalEdgeList[i].getRCity() << endl;
+		if(regionList[i].getNum() != regionList[i-1].getNum())
+		{
+			numRegions++;
+		}
 	}
+	cout << "<?xml version ='1.5'?>" << endl;
+	cout << "<country>" << endl;
+	//for(int j = 0; j < numRegions; j++)
+	//{
+		cout << "<region>" << endl;
+		//for(int k = 0; k < position+1; k++) //Increments through finalEdgeList, can look for cities -> regions
+		//{
+		for(int k = 0; k < numCity; k++)
+			{	
+				if(finalEdgeList[k].getRCity() < finalEdgeList[k].getLCity())
+				{
+					cout << "<road>" << finalEdgeList[k].getRCity() << " " << finalEdgeList[k].getLCity() << " " << finalEdgeList[k].getLength() << "</road>" << endl;
+				}
+				else
+				{
+					cout << "<road>" << finalEdgeList[k].getLCity() << " " << finalEdgeList[k].getRCity() << " " <<finalEdgeList[k].getLength() << "</road>" << endl;
+				}
+			}
+		//}
+		cout << "</region>" << endl;
+	//}
+	cout << "</country>" << endl;
 } //Prints each region in the output desired by chen
 

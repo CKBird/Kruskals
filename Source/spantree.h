@@ -18,7 +18,7 @@ class region //Each vertex has it's own region class instance, information is st
 {
 public:
 	region();
-	region* getNext()				{ return nextRegion; }
+	//region* getNext()				{ return nextRegion; }
 	void setRegion(unsigned region)	{ regionName = region; }
 	void setNum(int newValue)		{ regionNum = newValue; }
 	int getName()					{ return regionName; }
@@ -27,7 +27,7 @@ public:
 private:
 	int regionNum; //The final region it ends up in
 	int regionName; //The name of the region that started the set
-	region* nextRegion;
+	//region* nextRegion;
 };
 
 class road
@@ -40,7 +40,7 @@ public:
 	int getLCity() 					{ return leftCity; }
 	int getRCity()					{ return rightCity; }
 	int getLength()					{ return roadLength; }
-		
+
 private:
 	int roadLength;
 	int leftCity;
@@ -70,5 +70,6 @@ private:
 	unsigned edgeCount;
 	road* finalEdgeList;
 	region* regionList;
+	int position;
 };
 #endif
