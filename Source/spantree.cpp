@@ -15,7 +15,7 @@ using namespace std;
 
 road::road()
 {
-
+	
 } //Constructor for road class
 
 region::region()
@@ -33,15 +33,15 @@ spantree::spantree()
 void spantree::readInput()
 {
 	int leftCity, rightCity, length;
+	//arrayLength = numRoad;
+	edgeList = new road[arrayLength]; //Ditto
+	edgeCount = 0; //This used to be up on line 35
 	
 	cin >> numCity;
 	cin >> numRoad;
 	
 	arrayLength = numRoad;
 	finalEdgeList = new road[arrayLength];
-	edgeList = new road[arrayLength]; //Ditto
-	edgeCount = 0; //This used to be up on line 35
-
 	
 	while(!cin.eof())
 	{
@@ -66,16 +66,20 @@ void spantree::readInput()
 		region Region;
 		Region.setRegion(i);
 		Region.setNum(i);
+		//GETS TO HERE JUST FINE
 		regionList[i] = Region;
 	} //Once this is done, there will be numCity Regions, each with their own name
+	
 } //Reads input and stores
 
-void spantree::testInput() 
-	{
-		cout << "Cities : " << numCity;
-		cout << "    Roads : " << numRoad << endl;
+//Test Input went Here
 
-		for(unsigned i = 0; i < edgeCount; i++) {
+void spantree::testInput() 
+{
+	//cout << "Cities : " << numCity;
+	//cout << "    Roads : " << numRoad << endl;
+		for(unsigned i = 0; i < edgeCount; i++) 
+		{
 			road Road = edgeList[i];
 			cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
 		}
@@ -125,6 +129,8 @@ void spantree::sortInfo()
 	}
 	testSort();
 	
+	//This is where test sort was called
+	
 } //Sorts each region's road length and creates ordered array
 
 void spantree::testSort()
@@ -136,6 +142,7 @@ void spantree::testSort()
 	}
 	cout << endl;
 }
+//This was where the declaration for test sort was
 
 void spantree::buildTree()
 {
@@ -143,12 +150,14 @@ void spantree::buildTree()
 	for(unsigned i = 0; i < edgeCount; i++) //Take edges one at a time from sorted list
 	{
 		if(findSet(edgeList[i].getLCity()) != findSet(edgeList[i].getRCity()))
-			//findSet returns pointer to set city is in
-			//If they are not in the same set, put together
 		{
 			finalEdgeList[position] = edgeList[i]; //Add edge to final list
 			connect(edgeList[i].getLCity(), edgeList[i].getRCity()); //Put cities in same set
 			position++;
+		}
+		else
+		{
+			arrayLength--;
 		}
 	}
 	
@@ -199,35 +208,65 @@ void spantree::printOut()
 		}
 	} //Once finished, each road in finalEdgeList will have a region value
 	
-	for(int j = 0; j < getNumCity(); j++) //Go through each region
+	int regionOrder[arrayLength];
+	int numRegions = 0;
+	int tempRegion = -1;
+	for(unsigned i = 0; i < arrayLength; i++)
 	{
-		for(unsigned i = 0; i < arrayLength; i++)
+		if(finalEdgeList[i].getRegion() != tempRegion)
 		{
-			if(finalEdgeList[i].getRegion() == regionList[j].getNum())
-			{
-				regionList[j].setNumCities();
-			}	
+			numRegions++;
+			regionOrder[i] = finalEdgeList[i].getRegion();
+			tempRegion = finalEdgeList[i].getRegion();
 		}
-	} //Once finished, each region will have the current number of cities in it
+	} //THIS LOOP SHOULD GET THE TOTAL NUMBER OF REGIONS
 	
-	cout << "<?xml version=\"1.5\"?>" << endl;
-	cout << "<country>" << endl;
-	
-	for(int i = 1; i < getNumCity(); i++) //1 to n, number of cities loop
+	for(unsigned i = 0; i < arrayLength; i++) //Increment through edge list
 	{
-		for(int j = 0; j < getNumCity(); j++) //Go through Region List
+		int temp = regionList[(finalEdgeList[i].getRCity())].getNum();
+		regionList[temp].setNumCities(1);
+	} //THIS SHOULD SET THE NUMBER OF CITIES IN EACH REGION CORRECTLY
+	
+	//SHELL SORT TO SORT REGION LIST
+	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
+	int temp;
+	unsigned k;
+	//SORT ALG HERE
+	for(int i = 0; i < 8; i++) //For each gap in gaps
+	{
+		for(int j = gaps[i]; j < numRegions; j++)
 		{
-			if(regionList[j].getNumCities() == i)
+			temp = regionList[regionOrder[j]].getNumCities();
+			for(k = j; ((k >= gaps[i]) && (regionList[regionOrder[k-gaps[i]]].getNumCities()) > temp); k -= gaps[i])
 			{
-				cout << "<region>" << endl;
-				//ROAD LOOP HERE
-				cout << "NumCities: " << regionList[j].getNumCities() << endl;
-				cout << "</region>" << endl;
+				regionList[regionOrder[k]].setNumCities(regionList[regionOrder[k-gaps[i]]].getNumCities());
 			}
+			regionList[regionOrder[k]].setNumCities(temp);
 		}
 	}
 	
+	cout << "<?xml version=\"1.5\"?>" << endl;
+	cout << "<country>" << endl;
+	for(int i = 0; i < numRegions; i++)
+	{
+		cout << "<region>" << endl;
+		for(unsigned j = 0; j < arrayLength; j++)
+		{
+			if(finalEdgeList[j].getRegion() == regionOrder[i])
+			{
+				if(finalEdgeList[j].getRCity() < finalEdgeList[j].getLCity())
+				{
+					cout << "<road>" << finalEdgeList[j].getRCity() << " " << finalEdgeList[j].getLCity() << " " << finalEdgeList[j].getLength() << "</road>" << endl;
+				}
+				else
+				{
+					cout << "<road>" << finalEdgeList[j].getLCity() << " " << finalEdgeList[j].getRCity() << " " << finalEdgeList[j].getLength() << "</road>" << endl;
+				}
+			}
+		}
+		cout << "</region>" << endl;
+	}
 	cout << "</country>" << endl;
-	
+
 } //Prints each region in the output desired by chen
 

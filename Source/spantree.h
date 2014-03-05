@@ -18,19 +18,17 @@ class region //Each vertex has it's own region class instance, information is st
 {
 public:
 	region();
-	//region* getNext()				{ return nextRegion; }
 	void setRegion(unsigned region)	{ regionName = region; }
 	void setNum(int newValue)		{ regionNum = newValue; }
 	int getName()					{ return regionName; }
 	int getNum()					{ return regionNum; }
-	void setNumCities()				{ numCities++; }
+	void setNumCities(int value)	{ numCities = numCities + value; }
 	int getNumCities()				{ return numCities; }
 	
 private:
 	int regionNum; //The final region it ends up in
 	int regionName; //The name of the region that started the set
 	int numCities;
-	//region* nextRegion;
 };
 
 class road
