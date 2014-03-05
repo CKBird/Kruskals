@@ -33,12 +33,13 @@ spantree::spantree()
 void spantree::readInput()
 {
 	int leftCity, rightCity, length;
-	//arrayLength = numRoad;
+
 	edgeList = new road[arrayLength]; //Ditto
 	edgeCount = 0; //This used to be up on line 35
 	
 	cin >> numCity;
 	cin >> numRoad;
+	regionList = new region[numCity];
 	
 	arrayLength = numRoad;
 	finalEdgeList = new road[arrayLength];
@@ -69,7 +70,7 @@ void spantree::readInput()
 		//GETS TO HERE JUST FINE
 		regionList[i] = Region;
 	} //Once this is done, there will be numCity Regions, each with their own name
-	
+	testInput();
 } //Reads input and stores
 
 //Test Input went Here
@@ -80,8 +81,8 @@ void spantree::testInput()
 	//cout << "    Roads : " << numRoad << endl;
 		for(unsigned i = 0; i < edgeCount; i++) 
 		{
-			road Road = edgeList[i];
-			cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
+			//road Road = edgeList[i];
+			//cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
 		}
 		
 }
@@ -135,12 +136,12 @@ void spantree::sortInfo()
 
 void spantree::testSort()
 {
-	cout << endl << "The ordered list of edges is: " << endl;
+	//cout << endl << "The ordered list of edges is: " << endl;
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
-		cout << edgeList[i].getLength() << endl;
+		//cout << edgeList[i].getLength() << endl;
 	}
-	cout << endl;
+	//cout << endl;
 }
 //This was where the declaration for test sort was
 
