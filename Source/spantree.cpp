@@ -34,8 +34,7 @@ void spantree::readInput()
 {
 	int leftCity, rightCity, length;
 
-	edgeList = new road[arrayLength]; //Ditto
-	edgeCount = 0; //This used to be up on line 35
+//IT WAS HERE
 	
 	cin >> numCity;
 	cin >> numRoad;
@@ -43,6 +42,9 @@ void spantree::readInput()
 	
 	arrayLength = numRoad;
 	finalEdgeList = new road[arrayLength];
+	
+		edgeList = new road[arrayLength];
+	edgeCount = 0; 
 	
 	while(!cin.eof())
 	{
@@ -70,19 +72,18 @@ void spantree::readInput()
 		//GETS TO HERE JUST FINE
 		regionList[i] = Region;
 	} //Once this is done, there will be numCity Regions, each with their own name
-	testInput();
 } //Reads input and stores
 
 //Test Input went Here
 
 void spantree::testInput() 
 {
-	//cout << "Cities : " << numCity;
-	//cout << "    Roads : " << numRoad << endl;
+	cout << "Cities : " << numCity;
+	cout << "    Roads : " << numRoad << endl;
 		for(unsigned i = 0; i < edgeCount; i++) 
 		{
-			//road Road = edgeList[i];
-			//cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
+			road Road = edgeList[i];
+			cout << Road.getLCity() << " " << Road.getRCity() << " " << Road.getLength() << endl;
 		}
 		
 }
@@ -92,7 +93,7 @@ void spantree::resize()
 
 	//THIS IS NOW UNECCESSARY SINCE ARRAYLENGTH IS = TO NUMBER OF ROADS
 	
-	road* newEdgeList = new road[arrayLength * 2];
+	/*road* newEdgeList = new road[arrayLength * 2];
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
 		newEdgeList[i] = edgeList[i];
@@ -101,55 +102,65 @@ void spantree::resize()
 	delete edgeList;
 	edgeList = newEdgeList;
 	arrayLength *= 2;
-}
+*/}
 
 void spantree::sortInfo()
 {
-	//SHELL SORT OR QUICK SORT ALGORITHM
+	//SHELL SORT
 	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
-	int temp;
+	road temp;
 	unsigned k;
+	
+	/*cout << endl << "The UNordered list of edges is: " << endl;
+	for(unsigned i = 0; i < arrayLength; i++)
+	{
+		cout << edgeList[i].getLength() << endl;
+	}
+	cout << endl;*/
 	
 	for(unsigned i = 0; i < 8; i++)
 	{
-		for(unsigned j = gaps[i]; i < arrayLength; j+= 1)
+		for(unsigned j = gaps[i]; j < arrayLength; j+= 1)
 		{
 			if(arrayLength < j)
 			{
 				break;
 			}
 
-			temp = edgeList[j].getLength();
+			temp = edgeList[j];
+			//cout << "This is the temp value: " << edgeList[j].getLength() << endl;;
 			
-			for(k = j; (k >= gaps[i]) && (edgeList[k - gaps[i]].getLength()) > temp; k -= gaps[i])
+			for(k = j; (k >= gaps[i]) && (edgeList[k - gaps[i]].getLength()) > temp.getLength(); k -= gaps[i])
 			{
-				edgeList[k].setLength(edgeList[k - gaps[i]].getLength());
+				//cout << "This is the value being stored: " << edgeList[k-gaps[i]].getLength() << endl;
+				edgeList[k] = edgeList[k - gaps[i]];
 			}
-			edgeList[k].setLength(temp);
+			edgeList[k] = temp;
 		}
 	}
-	testSort();
-	
+	//testSort();
 	//This is where test sort was called
 	
 } //Sorts each region's road length and creates ordered array
 
 void spantree::testSort()
 {
-	//cout << endl << "The ordered list of edges is: " << endl;
+	cout << endl << "The ordered list of edges is: " << endl;
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
-		//cout << edgeList[i].getLength() << endl;
+		cout << edgeList[i].getLength() << endl;
 	}
-	//cout << endl;
+	cout << endl;
 }
 //This was where the declaration for test sort was
 
 void spantree::buildTree()
-{
-	int position = 0;
+{	
+	int position = 0; //Position in finalEdgeList being edited
 	for(unsigned i = 0; i < edgeCount; i++) //Take edges one at a time from sorted list
 	{
+
+		//cout << findSet(edgeList[i].getLCity()) << " --- " << findSet(edgeList[i].getRCity()) << endl;
 		if(findSet(edgeList[i].getLCity()) != findSet(edgeList[i].getRCity()))
 		{
 			finalEdgeList[position] = edgeList[i]; //Add edge to final list
@@ -166,34 +177,49 @@ void spantree::buildTree()
 
 int spantree::findSet(int city)
 {
-	int regionNum;
-	for(int i = 0; i < getNumCity(); i++) //Increment through list of regions
+	for(int i = 0; i < getNumCity(); i++) //Increment through regions
 	{
-		if(regionList[i].getName() == city) //If regions original name is same as the city
+		if(regionList[i].getName() == city) //Find city in region list
 		{
-			regionNum = regionList[i].getNum(); //Get the current name of the region it's in
-			break;
-		}		
+			return regionList[i].getNum(); //return region it's in
+		}
 	}
-	return regionNum;
+	return 0;
 } //Returns int number of region it is in
 
 void spantree::connect(int LCity, int RCity)
 {
 	int regionNum;
-	int changedRegion = -1;
-	for(int i = 0; i < getNumCity(); i++)
+	int tempRegion;
+	for(int i = 0; i < getNumCity(); i++) //Increment through regions
 	{
 		if(regionList[i].getName() == LCity)
 		{
 			regionNum = regionList[i].getNum();
-		}
-		else if(regionList[i].getName() == RCity)
-		{
-			changedRegion = i;
+			break;
 		}
 	}
-	regionList[changedRegion].setNum(regionNum);
+	//regionNum now has region of left city
+	
+	for(int j = 0; j < getNumCity(); j++)
+	{
+		if(regionList[j].getName() == RCity)
+		{
+			tempRegion = regionList[j].getNum();
+			regionList[j].setNum(regionNum);
+			break;
+		}
+	}
+	//Both RCity and LCity now have same regionNum
+	
+	for(int k = 0; k < getNumCity(); k++)
+	{
+		if(regionList[k].getNum() == tempRegion)
+		{
+			regionList[k].setNum(regionNum);
+		}
+	}
+	
 } //Connects the two input cities
 
 void spantree::printOut()
@@ -202,25 +228,41 @@ void spantree::printOut()
 	{
 		for(unsigned j = 0; j < arrayLength; j++) //Increments through finalEdgeList
 		{
-			if(regionList[i].getName() == finalEdgeList[j].getRCity()) //If RCity matches region NAME
+			if(regionList[i].getName() == finalEdgeList[j].getLCity()) //If RCity matches region NAME
 			{
 				finalEdgeList[j].setRegion(regionList[i].getNum()); //Sets region of edge
 			}
 		}
 	} //Once finished, each road in finalEdgeList will have a region value
 	
+	
 	int regionOrder[arrayLength];
-	int numRegions = 0;
-	int tempRegion = -1;
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
-		if(finalEdgeList[i].getRegion() != tempRegion)
+		regionOrder[i] = -1;
+	}
+	int numRegions = 0;
+	int check = 0;
+	for(unsigned i = 0; i < arrayLength; i++) //Going through finaledgelist again
+	{
+		for(unsigned j = 0; j < arrayLength; j++) //Increment through regionList
 		{
-			numRegions++;
-			regionOrder[i] = finalEdgeList[i].getRegion();
-			tempRegion = finalEdgeList[i].getRegion();
+			if(finalEdgeList[i].getRegion() == regionOrder[j])
+			{
+				check = 1;
+			}
 		}
-	} //THIS LOOP SHOULD GET THE TOTAL NUMBER OF REGIONS
+		if(check == 0)
+		{
+			regionOrder[numRegions] = finalEdgeList[i].getRegion();
+			numRegions++;
+			//cout << "NumRegions: " << numRegions << endl;
+		}
+		else
+		{
+			check = 0;
+		}
+	} //Sets total number of regions
 	
 	for(unsigned i = 0; i < arrayLength; i++) //Increment through edge list
 	{
@@ -230,30 +272,44 @@ void spantree::printOut()
 	
 	//SHELL SORT TO SORT REGION LIST
 	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
-	int temp;
+	region temp;
 	unsigned k;
+	
+	regionFinal = new region[numRegions];
+	for(int i = 0; i < numRegions; i++) //Increment through numRegions
+	{
+		for(int j = 0; j < getNumCity(); j++) //For each city, set regionFinal
+		{
+			if(regionOrder[i] == regionList[j].getNum())
+			{
+				regionFinal[i] = regionList[j];
+			}
+		}
+	}
+	//REGIONFINAL HAS POINTERS TO FINAL REGIONS
+	
 	//SORT ALG HERE
 	for(int i = 0; i < 8; i++) //For each gap in gaps
 	{
-		for(int j = gaps[i]; j < numRegions; j++)
+		for(int j = gaps[i]; j < numRegions; j++) //getNumCity() was numRegions
 		{
-			temp = regionList[regionOrder[j]].getNumCities();
-			for(k = j; ((k >= gaps[i]) && (regionList[regionOrder[k-gaps[i]]].getNumCities()) > temp); k -= gaps[i])
-			{
-				regionList[regionOrder[k]].setNumCities(regionList[regionOrder[k-gaps[i]]].getNumCities());
+			temp = regionFinal[j]; //ENTIRE REGION POINTER TO BE CHECKED AGAINST
+			for(k = j; k >= gaps[i] && regionFinal[k - gaps[i]].getNumCities() > temp.getNumCities(); k -= gaps[i])
+			{ //THIS IS SORTING REGIONlIST, NOT REGIONORDER
+				regionFinal[k] = regionFinal[k - gaps[i]]; //PUTTING SMALLEST NUMBER OF CITIES INTO REGIONFINAL
 			}
-			regionList[regionOrder[k]].setNumCities(temp);
+			regionFinal[k] = temp;
 		}
 	}
 	
 	cout << "<?xml version=\"1.5\"?>" << endl;
 	cout << "<country>" << endl;
-	for(int i = 0; i < numRegions; i++)
+	for(int i = 0; i < numRegions; i++) //Incrementing through regionFinal
 	{
 		cout << "<region>" << endl;
-		for(unsigned j = 0; j < arrayLength; j++)
+		for(unsigned j = 0; j < arrayLength; j++) //incrementing through finalEdgeList
 		{
-			if(finalEdgeList[j].getRegion() == regionOrder[i])
+			if(finalEdgeList[j].getRegion() == regionFinal[i].getNum()) //If region of edge is same as regionFinal
 			{
 				if(finalEdgeList[j].getRCity() < finalEdgeList[j].getLCity())
 				{

@@ -16,7 +16,7 @@ int main()
 {
 	spantree Spantree;
 	Spantree.readInput();
-	Spantree.testInput();
+	//Spantree.testInput();
 	//Reads input and stores
 	
 	Spantree.sortInfo();

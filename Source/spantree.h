@@ -74,6 +74,7 @@ private:
 	unsigned edgeCount;
 	road* finalEdgeList;
 	region* regionList;
+	region* regionFinal;
 	int position;
 };
 #endif
