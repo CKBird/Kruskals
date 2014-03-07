@@ -222,6 +222,45 @@ void spantree::connect(int LCity, int RCity)
 	
 } //Connects the two input cities
 
+int spantree::min(int num1, int num2)
+{
+	if(num1 < num2)
+	{
+		return num1;
+	}
+	else if(num2 < num1)
+	{
+		return num2;
+	}
+	else if(num1 == num2)
+	{
+		return -1;
+	}
+	else
+	{
+		cout << "I should NEVER get here" << endl;
+	}
+	return -2;
+}
+
+int spantree::max(int num1, int num2)
+{
+	if(num1 < num2)
+	{
+		return num2;
+	}
+	else if(num2 < num1)
+	{
+		return num1;
+	}
+	else if(num1 == num2)
+	{
+		cout << "Found redundant edges." << endl;
+		return -1;
+	}
+	return -2;
+}
+
 void spantree::printOut()
 {
 	for(int i = 0; i < getNumCity(); i++) //Will increment through region list
@@ -233,8 +272,57 @@ void spantree::printOut()
 				finalEdgeList[j].setRegion(regionList[i].getNum()); //Sets region of edge
 			}
 		}
-	} //Once finished, each road in finalEdgeList will have a region value
+	} //Once finished, each road in finalEdgeList will have a region value THIS WORKS
 	
+	road temp1;
+	for(unsigned i = 0; i < arrayLength; i++)
+	{
+		for(unsigned j = 0; j < arrayLength; j++)
+		{
+			if(i != j && (finalEdgeList[i].getLength() == finalEdgeList[j].getLength()) && (finalEdgeList[i].getRegion() == finalEdgeList[j].getRegion())) //If not checking same road, and length is the same
+			{
+				if(min(finalEdgeList[i].getRCity(), finalEdgeList[i].getLCity()) < min(finalEdgeList[j].getRCity(), finalEdgeList[j].getLCity()))
+				{ //If smallest city in iRoad is smaller than smallest in jRoad
+					if(i > j) //NOT sorted correctly
+					{
+						temp1 = finalEdgeList[i];
+						finalEdgeList[i] = finalEdgeList[j];
+						finalEdgeList[j] = temp1;
+					}
+				}
+				else if(min(finalEdgeList[i].getRCity(), finalEdgeList[i].getLCity()) > min(finalEdgeList[j].getRCity(), finalEdgeList[j].getLCity()))
+				{
+					if(j > i)
+					{
+						temp1 = finalEdgeList[i];
+						finalEdgeList[i] = finalEdgeList[j];
+						finalEdgeList[j] = temp1;
+					}
+				}
+				else if(min(finalEdgeList[i].getRCity(), finalEdgeList[i].getLCity()) == min(finalEdgeList[j].getRCity(), finalEdgeList[j].getLCity()))
+				{
+					if(max(finalEdgeList[i].getRCity(), finalEdgeList[i].getLCity()) < max(finalEdgeList[j].getRCity(), finalEdgeList[j].getLCity()))
+					{
+						if(i > j)
+						{
+							temp1 = finalEdgeList[i];
+							finalEdgeList[i] = finalEdgeList[j];
+							finalEdgeList[j] = temp1;
+						}
+					}
+					else if(max(finalEdgeList[i].getRCity(), finalEdgeList[i].getLCity()) > max(finalEdgeList[j].getRCity(), finalEdgeList[j].getLCity()))
+					{
+						if(i < j)
+						{
+							temp1 = finalEdgeList[i];
+							finalEdgeList[i] = finalEdgeList[j];
+							finalEdgeList[j] = temp1;
+						}
+					}
+				}
+			}
+		}
+	} //SAME REGION SAME LENGTH, SORT BY SMALLEST CITY
 	
 	int regionOrder[arrayLength];
 	for(unsigned i = 0; i < arrayLength; i++)
@@ -243,7 +331,7 @@ void spantree::printOut()
 	}
 	int numRegions = 0;
 	int check = 0;
-	for(unsigned i = 0; i < arrayLength; i++) //Going through finaledgelist again
+	for(unsigned i = 0; i < arrayLength; i++) //Going through finalEdgeList again
 	{
 		for(unsigned j = 0; j < arrayLength; j++) //Increment through regionList
 		{
@@ -262,18 +350,7 @@ void spantree::printOut()
 		{
 			check = 0;
 		}
-	} //Sets total number of regions
-	
-	for(unsigned i = 0; i < arrayLength; i++) //Increment through edge list
-	{
-		int temp = regionList[(finalEdgeList[i].getRCity())].getNum();
-		regionList[temp].setNumCities(1);
-	} //THIS SHOULD SET THE NUMBER OF CITIES IN EACH REGION CORRECTLY
-	
-	//SHELL SORT TO SORT REGION LIST
-	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
-	region temp;
-	unsigned k;
+	} //Sets total number of regions WORKS CORRECTLY
 	
 	regionFinal = new region[numRegions];
 	for(int i = 0; i < numRegions; i++) //Increment through numRegions
@@ -285,8 +362,45 @@ void spantree::printOut()
 				regionFinal[i] = regionList[j];
 			}
 		}
+	}	//REGIONFINAL HAS POINTERS TO FINAL REGIONS
+	
+	for(unsigned i = 0; i < arrayLength; i++) //Increment through edge list
+	{
+		for(int j = 0; j < numRegions; j++)
+		{
+			if(finalEdgeList[i].getRegion() == regionFinal[j].getNum())
+			{
+				regionFinal[j].setNumCities(1);
+				regionList[finalEdgeList[i].getRegion()].setNumCities(1);
+			}
+		}
+	} //THIS SHOULD SET THE NUMBER OF CITIES IN EACH REGION CORRECTLY
+	//IS WORKING CORRECTLY
+	
+	for(int i = 0; i < numCity; i++)
+	{
+		for(unsigned j = 0; j < arrayLength; j++)
+		{
+			if((regionList[i].getName() == finalEdgeList[j].getRCity()) || (regionList[i].getName() == finalEdgeList[j].getLCity()))
+			{
+				for(int k = 0; k < numRegions; k++)
+				{
+					if(regionOrder[k] == regionList[i].getName())
+					{
+						break;
+					}
+					regionList[i].setNumCities(-1);
+				}
+			}
+			break;
+		}
 	}
-	//REGIONFINAL HAS POINTERS TO FINAL REGIONS
+	
+	
+	//SHELL SORT TO SORT REGION LIST
+	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
+	region temp;
+	unsigned k;
 	
 	//SORT ALG HERE
 	for(int i = 0; i < 8; i++) //For each gap in gaps
@@ -295,15 +409,90 @@ void spantree::printOut()
 		{
 			temp = regionFinal[j]; //ENTIRE REGION POINTER TO BE CHECKED AGAINST
 			for(k = j; k >= gaps[i] && regionFinal[k - gaps[i]].getNumCities() > temp.getNumCities(); k -= gaps[i])
-			{ //THIS IS SORTING REGIONlIST, NOT REGIONORDER
+			{ 
 				regionFinal[k] = regionFinal[k - gaps[i]]; //PUTTING SMALLEST NUMBER OF CITIES INTO REGIONFINAL
 			}
 			regionFinal[k] = temp;
 		}
 	}
 	
+	int check1 = 0;
+	int check2 = 0;
+	int temp10, temp20;
+	for(int i = 0; (i < numRegions); i++) //Incrementing through regionFinal
+	{
+		for(int j = 0; (j < (numRegions - i)); j++) //For each region, increment through the other regions
+		{
+			if(i != j && (regionFinal[i].getNumCities() == regionFinal[j].getNumCities())) //if two regions have same number of cities
+			{
+				for(unsigned k = 0; k < arrayLength; k++) //Increment through edge list and find first edge in that region
+				{
+					if((finalEdgeList[k].getRegion() == regionFinal[i].getNum()) && check1 != 1) //If edge matches region, store edge num
+					{
+						temp10 = k;
+						check1 = 1;
+					}
+					else if((finalEdgeList[k].getRegion() == regionFinal[j].getNum()) && check2 != 1) //If edge matches region, store edge num
+					{
+						temp20 = k;
+						check2 = 1;
+					}
+					else if((check1 == 1) && (check2 == 1))
+					{
+						if(min(finalEdgeList[temp10].getRCity(), finalEdgeList[temp10].getLCity()) < min(finalEdgeList[temp20].getRCity(), finalEdgeList[temp20].getLCity()))
+						{
+							if(i > j)
+							{
+								region Bread;
+								Bread = regionFinal[i];
+								regionFinal[i] = regionFinal[j];
+								regionFinal[j] = Bread;
+							}
+						}
+						else if(min(finalEdgeList[temp10].getRCity(), finalEdgeList[temp10].getLCity()) > min(finalEdgeList[temp20].getRCity(), finalEdgeList[temp20].getLCity()))
+						{
+							if(i < j)
+							{
+								region Bread;
+								Bread = regionFinal[i];
+								regionFinal[i] = regionFinal[j];
+								regionFinal[j] = Bread;
+							}
+						}
+						check1 = 0;
+						check2 = 0;
+						break;
+					}
+				}
+			}
+		}
+	} //THIS FUCKING WORKS NOW BITCHES #SWAGGOMLYOLOMONEYSEEYANERDSXXX420FROAKWEED
+	
+	int skipCount = 0;
+	int meepo = 0;
+	for(int i = 0; i < numCity; i++)
+	{
+		for(int j = 0; j < numRegions; j++) //For each city, increment through final list of regions
+		{
+			if(regionOrder[j] == regionList[i].getNum())
+			{
+				meepo = 1; //If region num matches final region, release
+			}
+		}
+		if(meepo != 1)
+		{
+			skipCount++;
+		}
+		meepo = 0;
+	} //Accounting for empty regions
+	
 	cout << "<?xml version=\"1.5\"?>" << endl;
 	cout << "<country>" << endl;
+	
+	for(int i = 0; i < skipCount; i++)
+	{
+		cout << "<region>" << endl << "</region>" << endl;
+	}
 	for(int i = 0; i < numRegions; i++) //Incrementing through regionFinal
 	{
 		cout << "<region>" << endl;
@@ -324,6 +513,5 @@ void spantree::printOut()
 		cout << "</region>" << endl;
 	}
 	cout << "</country>" << endl;
-
 } //Prints each region in the output desired by chen
 

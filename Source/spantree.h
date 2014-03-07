@@ -65,6 +65,8 @@ public:
 	void printOut();		//Prints each region in the output desired by Chen
 	void testInput();		// delete this
 	void testSort();		// delete this too
+	int min(int num1, int num2);
+	int max(int num1, int num2);
 	
 private: 
 	int numCity;
