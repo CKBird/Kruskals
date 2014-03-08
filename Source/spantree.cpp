@@ -106,7 +106,6 @@ void spantree::resize()
 
 void spantree::sortInfo()
 {
-	//SHELL SORT
 	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
 	road temp;
 	unsigned k;
@@ -138,19 +137,18 @@ void spantree::sortInfo()
 			edgeList[k] = temp;
 		}
 	}
-	//testSort();
 	//This is where test sort was called
 	
 } //Sorts each region's road length and creates ordered array
 
 void spantree::testSort()
 {
-	cout << endl << "The ordered list of edges is: " << endl;
+	//cout << endl << "The ordered list of edges is: " << endl;
 	for(unsigned i = 0; i < arrayLength; i++)
 	{
-		cout << edgeList[i].getLength() << endl;
+		//cout << edgeList[i].getLength() << endl;
 	}
-	cout << endl;
+	//cout << endl;
 }
 //This was where the declaration for test sort was
 
@@ -397,7 +395,7 @@ void spantree::printOut()
 	}
 	
 	
-	//SHELL SORT TO SORT REGION LIST
+	//SHELL SORT TO SORT REGIONFinal
 	unsigned gaps[8] = {701, 301, 132, 57, 23, 10, 4, 1}; //Calculated 'fastest' gap length
 	region temp;
 	unsigned k;
@@ -412,9 +410,23 @@ void spantree::printOut()
 			{ 
 				regionFinal[k] = regionFinal[k - gaps[i]]; //PUTTING SMALLEST NUMBER OF CITIES INTO REGIONFINAL
 			}
-			regionFinal[k] = temp;
+			if(regionFinal[j].getNumCities() == regionFinal[k].getNumCities())
+			{
+				for(unsigned l = 0; l < arrayLength; l++)
+				{
+					
+				}
+			}
+			else
+			{
+				regionFinal[k] = temp;
+			}
 		}
 	}
+	
+	//Try writing a sort alg that sorts regionFinal based on number of cities, if they are equal, based on min of city length in smallest edge
+	
+	
 	
 	int check1 = 0;
 	int check2 = 0;
